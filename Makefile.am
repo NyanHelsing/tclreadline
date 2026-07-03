@@ -12,10 +12,10 @@
 
 lib_LTLIBRARIES = libtclreadline.la
 
-libtclreadline_la_SOURCES = config.h tclreadline.c tclreadline.h
+libtclreadline_la_SOURCES = config.h src/tclreadline.c tclreadline.h
 include_HEADERS = tclreadline.h
 
-AM_CPPFLAGS = -I$(TCL_INCLUDE_DIR) -I$(READLINE_INCLUDE_DIR)
+AM_CPPFLAGS = -I$(builddir) -I$(srcdir)/src -I$(TCL_INCLUDE_DIR) -I$(READLINE_INCLUDE_DIR)
 
 if !USE_TCL_STUBS
     libtclreadline_la_CFLAGS = -Wall
@@ -30,11 +30,11 @@ endif
 libtclreadline_la_LDFLAGS = -release $(MAJOR).$(MINOR).$(PATCHLEVEL)
 
 tclrldir = @TCLRL_DIR@
-tclrl_SCRIPTS = pkgIndex.tcl tclreadlineCompleter.tcl tclreadlineInit.tcl tclreadlineSetup.tcl
+tclrl_SCRIPTS = pkgIndex.tcl src/tclreadlineCompleter.tcl tclreadlineInit.tcl tclreadlineSetup.tcl
 INSTALL_SCRIPT = ${INSTALL_DATA}
 
 EXTRA_DIST =                 \
-    tclreadlineCompleter.tcl \
+    src/tests.tcl            \
     aux/config.guess         \
     aux/config.sub           \
     aux/install-sh           \
@@ -56,8 +56,7 @@ wishrl_LDFLAGS = -static
 endif
 
 bin_PROGRAMS = $(static_tclshrl) $(static_wishrl)
-tclshrl_SOURCES = tclshrl.c
-wishrl_SOURCES = wishrl.c
+tclshrl_SOURCES = src/tclshrl.c
+wishrl_SOURCES = src/wishrl.c
 
 man_MANS = tclreadline.n
-
