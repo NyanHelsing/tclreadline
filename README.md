@@ -45,7 +45,11 @@ Before trying to compile tclreadline you should do the following things:
 3. Follow the instructions in README.{your-OS}, if there isn't one,
    adapt the README.Linux instructions.
 
-4. Optionally (or additionally) you can build the executables
+4. Generate the configure script and makefile templates:
+
+        autoreconf -ivf
+
+5. Optionally (or additionally) you can build the executables
    tclshrl and / or wishrl which are a readline enhanced replacement
    for tclsh and wish. To compile these executable you should type
 
@@ -70,4 +74,3 @@ like wish, you should copy the file sample.tclshrc to $HOME/.wishrc
 installed tclreadline properly, you are just ready to start:
 start your favorite interpreter. The tclreadlineSetup.tcl script
 does the rest.
-

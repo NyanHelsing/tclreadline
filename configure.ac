@@ -9,7 +9,7 @@ dnl This software is copyright under the BSD license.
 dnl ---
 
 AC_INIT([tclreadline],[2.4.1])
-AC_CONFIG_SRCDIR([tclreadline.c])
+AC_CONFIG_SRCDIR([src/tclreadline.c])
 AC_CONFIG_HEADERS(config.h)
 AC_PREREQ([2.71])
 AC_REVISION($Revision$)
@@ -27,7 +27,7 @@ AC_SUBST(PATCHLEVEL)
 AC_SUBST(VERSION)
 AC_SUBST(PATCHLEVEL_STR)
 
-AM_INIT_AUTOMAKE([foreign])
+AM_INIT_AUTOMAKE([foreign subdir-objects])
 
 
 AC_PROG_MAKE_SET
@@ -322,5 +322,5 @@ AC_SUBST(TCL_INCLUDE_DIR)
 AC_SUBST(TCL_STUB_LIB_SPEC)
 AC_SUBST(TCL_LIB_SPEC)
 AC_SUBST(READLINE_INCLUDE_DIR)
-AC_CONFIG_FILES([Makefile tclreadline.h tclreadlineInit.tcl tclreadlineSetup.tcl tclreadline.n pkgIndex.tcl])
+AC_CONFIG_FILES([Makefile tclreadline.h:src/tclreadline.h.in tclreadlineInit.tcl tclreadlineSetup.tcl tclreadline.n pkgIndex.tcl])
 AC_OUTPUT
