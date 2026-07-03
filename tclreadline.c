@@ -253,10 +253,17 @@ TclReadlineCmd(ClientData clientData, Tcl_Interp *interp, int objc,
     switch (obj_idx) {
 
         case TCLRL_READ:
+        {
+            Tcl_DString prompt_ds;
+            const char *prompt = "% ";
 
-            rl_callback_handler_install(
-                       objc == 3 ? Tcl_GetStringFromObj(objv[2], 0)
-                       : "% ", TclReadlineLineCompleteHandler);
+            Tcl_DStringInit(&prompt_ds);
+            if (objc == 3) {
+                prompt = Tcl_UtfToExternalDString(NULL,
+                    Tcl_GetStringFromObj(objv[2], 0), -1, &prompt_ds);
+            }
+
+            rl_callback_handler_install(prompt, TclReadlineLineCompleteHandler);
 
             Tcl_CreateFileHandler(0, TCL_READABLE,
                 TclReadlineReadHandler, (ClientData) NULL);
@@ -286,6 +293,7 @@ TclReadlineCmd(ClientData clientData, Tcl_Interp *interp, int objc,
             }
 
             Tcl_DeleteFileHandler(0);
+            Tcl_DStringFree(&prompt_ds);
 
             switch (tclrl_state) {
 
@@ -308,6 +316,7 @@ TclReadlineCmd(ClientData clientData, Tcl_Interp *interp, int objc,
                     break;
             }
             break;
+        }
 
         case TCLRL_INITIALIZE:
             if (3 != objc) {
