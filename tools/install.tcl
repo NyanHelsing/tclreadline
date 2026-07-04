@@ -95,6 +95,19 @@ proc installFile {source dest} {
     file copy -force $source $dest
 }
 
+proc installDirectory {source dest} {
+    file delete -force $dest
+    file mkdir $dest
+    foreach child [glob -nocomplain -directory $source *] {
+        set target [file join $dest [file tail $child]]
+        if {[file isdirectory $child]} {
+            installDirectory $child $target
+        } else {
+            installFile $child $target
+        }
+    }
+}
+
 array set opt {
     prefix ""
     destdir ""
@@ -201,5 +214,6 @@ renderTemplate [file join $root tclreadlineSetup.tcl.in] [file join $destPkgdir 
 renderTemplate [file join $root tclreadline.n.in] [file join $destMandir tclreadline.n] $replacements
 renderTemplate [file join $root src tclreadline.h.in] [file join $destIncludedir tclreadline.h] $replacements
 installFile [file join $root src tclreadlineCompleter.tcl] [file join $destPkgdir tclreadlineCompleter.tcl]
+installDirectory [file join $root src tclreadlineCompleter] [file join $destPkgdir tclreadlineCompleter]
 
 puts "installed tclreadline $version to $destPrefix"
