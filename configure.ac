@@ -283,11 +283,13 @@ AC_ARG_ENABLE(tclstub,
 )
 AM_CONDITIONAL(USE_TCL_STUBS, test x$enable_tclstub = xtrue)
 
+cargo_required=false
+
 AC_ARG_ENABLE(tclshrl,
     [  --enable-tclshrl        build statically linked tclshrl],
     [dnl action if given
     case "${enableval}" in
-        yes) enable_static=true ;;
+        yes) enable_static=true; cargo_required=true ;;
         no)  enable_static=false ;;
         *)   AC_MSG_ERROR(bad value ${enableval} for --enable-static) ;;
     esac
@@ -304,6 +306,7 @@ AC_ARG_ENABLE(wishrl,
     case "${enableval}" in
         yes)
         enable_static=true
+        cargo_required=true
         dnl source the tkConfig.sh which defines TK_LIB_SPEC
         . $TK_LIB_DIR/tkConfig.sh
         AC_SUBST(TK_LIB_SPEC)
@@ -317,6 +320,14 @@ AC_ARG_ENABLE(wishrl,
     ]
 )
 AM_CONDITIONAL(STATIC_WISHRL, test x$enable_static = xtrue)
+
+if test x$cargo_required = xtrue; then
+    AC_CHECK_PROG([CARGO], [cargo], [cargo])
+    if test -z "$CARGO"; then
+        AC_MSG_ERROR([cargo is required when building tclshrl or wishrl])
+    fi
+fi
+AC_SUBST(CARGO)
 
 AC_SUBST(TCL_INCLUDE_DIR)
 AC_SUBST(TCL_STUB_LIB_SPEC)

@@ -34,29 +34,40 @@ tclrl_SCRIPTS = pkgIndex.tcl src/tclreadlineCompleter.tcl tclreadlineInit.tcl tc
 INSTALL_SCRIPT = ${INSTALL_DATA}
 
 EXTRA_DIST =                 \
-    src/tests.tcl            \
-    aux/config.guess         \
-    aux/config.sub           \
-    aux/install-sh           \
-    aux/ltconfig             \
-    aux/ltmain.sh            \
-    aux/missing              \
-    aux/mkinstalldirs
+    Cargo.toml               \
+    build.rs                 \
+    src/bin/tclshrl.rs       \
+    src/bin/wishrl.rs        \
+    src/common.rs            \
+    src/tests.tcl
 
 if STATIC_TCLSHRL
-static_tclshrl = tclshrl
-tclshrl_LDADD = libtclreadline.la $(TCL_LIB_SPEC)
-tclshrl_LDFLAGS = -static
+rust_tclshrl = tclshrl
 endif
 
 if STATIC_WISHRL
-static_wishrl = wishrl
-wishrl_LDADD = libtclreadline.la $(TCL_LIB_SPEC) $(TK_LIB_SPEC)
-wishrl_LDFLAGS = -static
+rust_wishrl = wishrl
 endif
 
-bin_PROGRAMS = $(static_tclshrl) $(static_wishrl)
-tclshrl_SOURCES = src/tclshrl.c
-wishrl_SOURCES = src/wishrl.c
+bin_PROGRAMS = $(rust_tclshrl) $(rust_wishrl)
+tclshrl_SOURCES =
+wishrl_SOURCES =
+CLEANFILES = tclshrl wishrl
+
+cargo_target_dir = $(abs_builddir)/target
+cargo_env = \
+    TCLREADLINE_LIB_DIR="$(abs_builddir)/.libs" \
+    TCLRL_LIBDIR="$(TCLRL_LIBDIR)" \
+    TCLRL_LIBRARY="$(TCLRL_DIR)" \
+    TCL_LIB_SPEC="$(TCL_LIB_SPEC)" \
+    TK_LIB_SPEC="$(TK_LIB_SPEC)"
+
+tclshrl$(EXEEXT): libtclreadline.la Cargo.toml build.rs src/bin/tclshrl.rs src/common.rs
+	CARGO_TARGET_DIR="$(cargo_target_dir)/tclshrl" $(cargo_env) $(CARGO) build --release --manifest-path $(srcdir)/Cargo.toml --bin tclshrl
+	cp "$(cargo_target_dir)/tclshrl/release/tclshrl$(EXEEXT)" "$@"
+
+wishrl$(EXEEXT): libtclreadline.la Cargo.toml build.rs src/bin/wishrl.rs src/common.rs
+	CARGO_TARGET_DIR="$(cargo_target_dir)/wishrl" $(cargo_env) $(CARGO) build --release --manifest-path $(srcdir)/Cargo.toml --bin wishrl
+	cp "$(cargo_target_dir)/wishrl/release/wishrl$(EXEEXT)" "$@"
 
 man_MANS = tclreadline.n
