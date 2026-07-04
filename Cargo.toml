@@ -5,6 +5,11 @@ edition = "2021"
 
 build = "build.rs"
 
+[lib]
+name = "tclreadline_core"
+path = "src/lib.rs"
+crate-type = ["staticlib"]
+
 [[bin]]
 name = "tclshrl"
 path = "src/bin/tclshrl.rs"

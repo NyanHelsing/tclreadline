@@ -9,7 +9,7 @@ dnl This software is copyright under the BSD license.
 dnl ---
 
 AC_INIT([tclreadline],[2.4.1])
-AC_CONFIG_SRCDIR([src/tclreadline.c])
+AC_CONFIG_SRCDIR([src/lib.rs])
 AC_CONFIG_HEADERS(config.h)
 AC_PREREQ([2.71])
 AC_REVISION($Revision$)
