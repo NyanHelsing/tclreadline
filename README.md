@@ -45,24 +45,22 @@ Before trying to compile tclreadline you should do the following things:
 3. Follow the instructions in README.{your-OS}, if there isn't one,
    adapt the README.Linux instructions.
 
-4. Generate the configure script and makefile templates:
+4. Build the shared library and tclshrl with Cargo:
 
-        autoreconf -ivf
+        cargo build --release
 
-5. Optionally (or additionally) you can build the executables
-   tclshrl and / or wishrl which are a readline enhanced replacement
-   for tclsh and wish. To compile these executable you should type
+5. Install the shared library, Tcl package scripts, header, man page, and
+   tclshrl with the Tcl installer:
 
-        ./configure --enable-tclshrl --enable-wishrl
+        tools/install.tcl --prefix /usr/local
 
-    (or one of these if you want just tclshrl or wishrl).
-    NOTE that these executables need an installed version of
-    tclreadline because they need some script files to run
-    so you can't test tclshrl/wishrl before installing
-    the tclreadline scripts.
+   If tclConfig.sh is not in a standard library directory, pass it explicitly:
 
-    Building statically linked executables is DISCOURAGED
-    but necessary on systems which don't support shared libs.
+        tools/install.tcl --tcl-config /path/to/tclConfig.sh
+
+   To also build and install wishrl, provide Tk and enable the wish target:
+
+        tools/install.tcl --with-wish --tk-config /path/to/tkConfig.sh
 
 
 Using tclreadline for interactive tcl scripting.

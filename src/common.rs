@@ -28,9 +28,6 @@ extern "C" {
         init_proc: Option<PackageInitProc>,
         safe_init_proc: Option<PackageInitProc>,
     );
-
-    fn Tclreadline_Init(interp: *mut TclInterp) -> c_int;
-    fn Tclreadline_SafeInit(interp: *mut TclInterp) -> c_int;
 }
 
 pub unsafe fn init_tcl(interp: *mut TclInterp) -> c_int {
@@ -38,7 +35,7 @@ pub unsafe fn init_tcl(interp: *mut TclInterp) -> c_int {
 }
 
 pub unsafe fn init_readline(interp: *mut TclInterp, rc_file: &str) -> c_int {
-    if Tclreadline_Init(interp) == TCL_ERROR {
+    if tclreadline::Tclreadline_Init(interp.cast()) == TCL_ERROR {
         return TCL_ERROR;
     }
 
@@ -52,9 +49,17 @@ unsafe fn register_static_package(interp: *mut TclInterp) {
     Tcl_StaticPackage(
         interp,
         package.as_ptr(),
-        Some(Tclreadline_Init),
-        Some(Tclreadline_SafeInit),
+        Some(tclreadline_init),
+        Some(tclreadline_safe_init),
     );
+}
+
+unsafe extern "C" fn tclreadline_init(interp: *mut TclInterp) -> c_int {
+    tclreadline::Tclreadline_Init(interp.cast())
+}
+
+unsafe extern "C" fn tclreadline_safe_init(interp: *mut TclInterp) -> c_int {
+    tclreadline::Tclreadline_SafeInit(interp.cast())
 }
 
 unsafe fn set_rc_file(interp: *mut TclInterp, rc_file: &str) {

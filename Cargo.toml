@@ -5,10 +5,13 @@ edition = "2021"
 
 build = "build.rs"
 
+[features]
+wishrl = []
+
 [lib]
-name = "tclreadline_core"
+name = "tclreadline"
 path = "src/lib.rs"
-crate-type = ["staticlib"]
+crate-type = ["cdylib", "rlib"]
 
 [[bin]]
 name = "tclshrl"
@@ -17,3 +20,4 @@ path = "src/bin/tclshrl.rs"
 [[bin]]
 name = "wishrl"
 path = "src/bin/wishrl.rs"
+required-features = ["wishrl"]
